@@ -1,7 +1,7 @@
 ## Using docker
 
 ```sh
-$ make dev # run dev server
+$ make dev # run dev server on localhost:3000
 $ make test # run tests
 ```
 
@@ -9,6 +9,6 @@ $ make test # run tests
 
 ```sh
 $ npm i # install dependencies
-$ npm start # run dev server
+$ npm start # run dev server on localhost:3000
 $ npm test # run tests
 ```
