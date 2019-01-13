@@ -22,9 +22,8 @@ class PersonWidget extends Component {
     return (
       <div>
         <img src={person.picture.thumbnail} width="70" height="70" alt="photo"/>
-        <span>{person.name.title}</span>
-        <span>{person.name.first}</span>
-        <span>{person.name.last}</span>
+        <div>{person.name.first}</div>
+        <div>{person.location.city}</div>
         { buttonsConfig.prev && <button onClick={() => this.handleClick('prev')}>Prev</button> }
         { buttonsConfig.next && <button onClick={() => this.handleClick('next')}>Next</button> }
       </div>

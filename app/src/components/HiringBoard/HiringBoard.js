@@ -9,22 +9,28 @@ class HiringBoard extends Component {
     data: []
   };
 
+  bufferedData = [];
+
   async componentDidMount() {
     const { data } = await axios.get('https://randomuser.me/api/?nat=gb&results=5');
 
     this.setState({
       data: data.results
     });
+
+    this.bufferedData = data.results;
   }
 
   getFiltersConfig() {
     return [
       {
         field: 'city',
+        path: 'location.city',
         type: 'input'
       },
       {
         field: 'name',
+        path: 'name.first',
         type: 'input'
       }
     ]
@@ -57,30 +63,49 @@ class HiringBoard extends Component {
 
     personToUpdate.hiringStage = this.getUpdatedStageNumber(currentStage, action);
 
+    const updatedData = [...filteredData, personToUpdate];
+
     this.setState({
-      data: [...filteredData, personToUpdate]
-    })
+      data: updatedData
+    });
+
+    this.bufferedData = updatedData;
+  };
+
+  filterData = (filterPath, value) => {
+    let filteredData = [];
+
+    if (value) {
+      filteredData = this.bufferedData.filter(person => {
+        return filterPath.split('.').reduce((acum, field) => {
+          acum = acum[field];
+
+          return acum;
+        }, person).includes(value.toLowerCase());
+      });
+    } else {
+      filteredData = this.bufferedData;
+    }
+
+    this.setState({
+      data: filteredData
+    });
   };
 
   render() {
-    const { data } = this.state;
-
     return (
       <div>
-        {
-          data.length === 0
-            ? <span>Loading...</span>
-            : (
-              <React.Fragment>
-                <HiringBoardFilters filters={this.getFiltersConfig()} />
-                <HiringBoardTable
-                  boardConfig={this.getBoardConfig()}
-                  data={this.state.data}
-                  updateData={this.updateData}
-                />
-              </React.Fragment>
-            )
-        }
+        <React.Fragment>
+          <HiringBoardFilters
+            filterData={this.filterData}
+            filtersConfig={this.getFiltersConfig()}
+          />
+          <HiringBoardTable
+            boardConfig={this.getBoardConfig()}
+            data={this.state.data}
+            updateData={this.updateData}
+          />
+        </React.Fragment>
       </div>
     );
   }
