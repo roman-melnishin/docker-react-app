@@ -16,7 +16,7 @@ class HiringBoardColumn extends Component {
   };
 
   getTitle() {
-    return <h4>{this.props.stage.title}</h4>
+    return <Title>{this.props.stage.title}</Title>
   }
 
   getContent() {
@@ -48,3 +48,12 @@ class HiringBoardColumn extends Component {
 }
 
 export default HiringBoardColumn;
+
+const Title = styled.div`
+  font-weight: normal;
+  background: #F4F5F7;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 15px;
+  margin: 0 20px 20px 0;
+`;

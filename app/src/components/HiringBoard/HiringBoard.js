@@ -1,21 +1,25 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import axios from 'axios';
 import HiringBoardFilters from '../HiringBoardFilters/HiringBoardFilters';
 import HiringBoardTable from '../HiringBoardTable/HiringBoardTable';
 
 class HiringBoard extends Component {
   state = {
-    data: []
+    data: [],
+    loading: true
   };
 
   bufferedData = [];
+
+  activeFilters = {};
 
   async componentDidMount() {
     const { data } = await axios.get('https://randomuser.me/api/?nat=gb&results=5');
 
     this.setState({
-      data: data.results
+      data: data.results,
+      loading: false
     });
 
     this.bufferedData = data.results;
@@ -58,30 +62,65 @@ class HiringBoard extends Component {
   }
 
   updateData = (personId, currentStage, action) => {
-    const filteredData = this.state.data.filter(person => person.login.uuid !== personId);
-    const personToUpdate = this.state.data.find(person => person.login.uuid === personId);
+    const activeFilters = Object.keys(this.activeFilters);
 
-    personToUpdate.hiringStage = this.getUpdatedStageNumber(currentStage, action);
+    if (activeFilters.length) {
+      const filteredData = this.state.data.filter(person => person.login.uuid !== personId);
+      const personToUpdate = this.state.data.find(person => person.login.uuid === personId);
 
-    const updatedData = [...filteredData, personToUpdate];
+      const filteredBufferedData = this.bufferedData.filter(person => person.login.uuid !== personId);
 
-    this.setState({
-      data: updatedData
-    });
+      personToUpdate.hiringStage = this.getUpdatedStageNumber(currentStage, action);
 
-    this.bufferedData = updatedData;
+      const updatedData = [...filteredData, personToUpdate];
+
+      this.setState({
+        data: updatedData
+      });
+
+      this.bufferedData = [...filteredBufferedData, personToUpdate];
+    } else { // without filters
+      const filteredData = this.state.data.filter(person => person.login.uuid !== personId);
+      const personToUpdate = this.state.data.find(person => person.login.uuid === personId);
+
+      personToUpdate.hiringStage = this.getUpdatedStageNumber(currentStage, action);
+
+      const updatedData = [...filteredData, personToUpdate];
+
+      this.setState({
+        data: updatedData
+      });
+
+      this.bufferedData = updatedData;
+    }
   };
 
   filterData = (filterPath, value) => {
     let filteredData = [];
 
     if (value) {
-      filteredData = this.bufferedData.filter(person => {
-        return filterPath.split('.').reduce((acum, field) => {
-          acum = acum[field];
+      this.activeFilters[filterPath] = value;
+    } else {
+      delete this.activeFilters[filterPath];
+    }
 
-          return acum;
-        }, person).includes(value.toLowerCase());
+    const activeFilters = Object.keys(this.activeFilters);
+
+    if (activeFilters.length) {
+      filteredData = this.bufferedData.filter(person => {
+        let isValid = true;
+
+        activeFilters.forEach(filterPath => {
+          if (isValid) {
+            isValid = filterPath.split('.').reduce((acum, field) => {
+              acum = acum[field];
+
+              return acum;
+            }, person).includes(this.activeFilters[filterPath].toLowerCase());
+          }
+        });
+
+        return isValid;
       });
     } else {
       filteredData = this.bufferedData;
@@ -94,21 +133,68 @@ class HiringBoard extends Component {
 
   render() {
     return (
-      <div>
-        <React.Fragment>
-          <HiringBoardFilters
-            filterData={this.filterData}
-            filtersConfig={this.getFiltersConfig()}
-          />
-          <HiringBoardTable
-            boardConfig={this.getBoardConfig()}
-            data={this.state.data}
-            updateData={this.updateData}
-          />
-        </React.Fragment>
-      </div>
+      <Wrapper>
+        {
+          this.state.loading
+            ? <Loader className="loader">Loading...</Loader>
+            : (
+              <React.Fragment>
+                <HiringBoardFilters
+                  filterData={this.filterData}
+                  filtersConfig={this.getFiltersConfig()}
+                />
+                <HiringBoardTable
+                  boardConfig={this.getBoardConfig()}
+                  data={this.state.data}
+                  updateData={this.updateData}
+                />
+              </React.Fragment>
+            )
+        }
+      </Wrapper>
     );
   }
 }
 
 export default HiringBoard;
+
+const Wrapper = styled.div`
+  width: 60%;
+  margin: 100px auto;
+  background: #fff;
+  padding: 20px;
+  font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,'Fira Sans','Droid Sans','Helvetica Neue',sans-serif;
+  border-radius: 7px;
+`;
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const Loader = styled.div`
+  border-radius: 50%;
+  width: 5em;
+  height: 5em;
+  margin: 60px auto;
+  font-size: 10px;
+  position: relative;
+  text-indent: -9999em;
+  border-top: 1.1em solid rgba(0, 63, 107, 0.7);
+  border-right: 1.1em solid rgba(0, 63, 107, 0.7);
+  border-bottom: 1.1em solid rgba(0, 63, 107, 0.7);
+  border-left: 1.1em solid #ffffff;
+  transform: translateZ(0);
+  animation: ${rotate} 1.1s infinite linear;
+  
+  ::after {
+    border-radius: 50%;
+    width: 5em;
+    height: 5em;
+  }
+`;

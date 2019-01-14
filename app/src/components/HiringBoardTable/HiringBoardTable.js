@@ -50,11 +50,25 @@ class HiringBoardTable extends Component {
 
   render() {
     return (
-      <Wrapper>
-        { this.getColumns()}
-      </Wrapper>
+      <React.Fragment>
+        <Header>Board</Header>
+        <Wrapper>
+          { this.getColumns()}
+        </Wrapper>
+      </React.Fragment>
+
     );
   }
 }
 
 export default HiringBoardTable;
+
+const Header = styled.h3`
+  color: #172b4d;
+  font-size: 29px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 32px;
+  letter-spacing: -.29px;
+  margin: 0 0 15px;
+`;

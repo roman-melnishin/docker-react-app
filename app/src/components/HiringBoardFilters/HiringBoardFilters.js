@@ -37,25 +37,70 @@ class HiringBoardFilters extends Component {
   getFilters() {
     return this.props.filtersConfig.map(filter => {
       return filter.type === 'input' && (
-        <label key={filter.field}>
-          {filter.field}
-          <input
+        <Label key={filter.field}>
+          <Span>{filter.field}</Span>
+          <Input
             value={this.state[`${filter.field}Value`]}
             onChange={(e) => this.onChange(filter, e)}
           />
-        </label>
+        </Label>
       )
     })
   }
 
   render() {
     return (
-      <div>
-        <h3>Filters</h3>
+      <Wrapper>
+        <Header>Filters</Header>
         { this.getFilters() }
-      </div>
+      </Wrapper>
     );
   }
 }
 
 export default HiringBoardFilters;
+
+const Wrapper = styled.div`
+  margin-bottom: 30px;
+`;
+
+const Header = styled.h3`
+  color: #172b4d;
+  font-size: 29px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 32px;
+  letter-spacing: -.29px;
+  margin: 0 0 15px;
+`;
+
+const Input = styled.input`
+  border-radius: 3px 3px 3px 3px;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1;
+  height: 30px;
+  max-width: none;
+  padding: 5px 24px 5px 10px;
+  transition: width 100ms ease-in-out;
+  width: 160px;
+  background-color: #f4f5f7;
+  border: 1px solid #dfe1e6;
+  color: #172b4d;
+  
+  &:focus {
+    background-color: #fff;
+    border: 1px solid #4c9aff;
+    outline: 0;
+    box-shadow: 0 0 0 1px #4c9aff;
+  }
+`;
+
+const Span = styled.span`
+  margin-right: 6px;
+  font-size: 14px;
+`;
+
+const Label = styled.label`
+  margin-right: 15px;
+`;
