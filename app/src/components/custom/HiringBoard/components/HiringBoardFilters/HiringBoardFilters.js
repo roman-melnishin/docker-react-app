@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Input } from '../../../..'
 
 class HiringBoardFilters extends Component {
   static propTypes = {
@@ -39,7 +40,7 @@ class HiringBoardFilters extends Component {
       return filter.type === 'input' && (
         <Label key={filter.field}>
           <Span>{filter.field}</Span>
-          <Input
+          <StyledInput
             value={this.state[`${filter.field}Value`]}
             onChange={(e) => this.onChange(filter, e)}
           />
@@ -74,7 +75,7 @@ const Header = styled.h3`
   margin: 0 0 15px;
 `;
 
-const Input = styled.input`
+const StyledInput = styled(props => <Input {...props} />)`
   border-radius: 3px 3px 3px 3px;
   box-sizing: border-box;
   font-size: 14px;
@@ -87,7 +88,7 @@ const Input = styled.input`
   background-color: #f4f5f7;
   border: 1px solid #dfe1e6;
   color: #172b4d;
-  
+
   &:focus {
     background-color: #fff;
     border: 1px solid #4c9aff;

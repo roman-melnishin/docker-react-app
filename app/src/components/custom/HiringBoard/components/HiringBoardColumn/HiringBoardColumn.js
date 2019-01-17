@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import PersonWidget from '../PersonWidget/PersonWidget';
 
-const Wrapper = styled.div`
-  flex: 1;
-`;
-
 class HiringBoardColumn extends Component {
   static propTypes = {
     stage: PropTypes.object.isRequired,
@@ -48,6 +44,10 @@ class HiringBoardColumn extends Component {
 }
 
 export default HiringBoardColumn;
+
+const Wrapper = styled.div`
+  flex: 1;
+`;
 
 const Title = styled.div`
   font-weight: normal;

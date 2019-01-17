@@ -3,10 +3,6 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import HiringBoardColumn from '../HiringBoardColumn/HiringBoardColumn';
 
-const Wrapper = styled.div`
-  display: flex;
-`;
-
 class HiringBoardTable extends Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
@@ -62,6 +58,10 @@ class HiringBoardTable extends Component {
 }
 
 export default HiringBoardTable;
+
+const Wrapper = styled.div`
+  display: flex;
+`;
 
 const Header = styled.h3`
   color: #172b4d;

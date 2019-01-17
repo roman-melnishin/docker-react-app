@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import styled, { keyframes } from 'styled-components';
-import axios from 'axios';
-import HiringBoardFilters from '../HiringBoardFilters/HiringBoardFilters';
-import HiringBoardTable from '../HiringBoardTable/HiringBoardTable';
+import HiringBoardFilters from './components/HiringBoardFilters/HiringBoardFilters';
+import HiringBoardTable from './components/HiringBoardTable/HiringBoardTable';
+import getApplicants from '../../../api/hiringBoardApi/getApplicants';
 
 class HiringBoard extends Component {
   state = {
@@ -15,14 +15,14 @@ class HiringBoard extends Component {
   activeFilters = {};
 
   async componentDidMount() {
-    const { data } = await axios.get('https://randomuser.me/api/?nat=gb&results=5');
+    const data = await getApplicants();
 
     this.setState({
-      data: data.results,
+      data,
       loading: false
     });
 
-    this.bufferedData = data.results;
+    this.bufferedData = data;
   }
 
   getFiltersConfig() {
@@ -63,34 +63,20 @@ class HiringBoard extends Component {
 
   updateData = (personId, currentStage, action) => {
     const activeFilters = Object.keys(this.activeFilters);
+    const filteredData = this.state.data.filter(person => person.login.uuid !== personId);
+    const personToUpdate = this.state.data.find(person => person.login.uuid === personId);
+
+    personToUpdate.hiringStage = this.getUpdatedStageNumber(currentStage, action);
+
+    const updatedData = [...filteredData, personToUpdate];
+
+    this.setState({ data: updatedData });
 
     if (activeFilters.length) {
-      const filteredData = this.state.data.filter(person => person.login.uuid !== personId);
-      const personToUpdate = this.state.data.find(person => person.login.uuid === personId);
-
       const filteredBufferedData = this.bufferedData.filter(person => person.login.uuid !== personId);
-
-      personToUpdate.hiringStage = this.getUpdatedStageNumber(currentStage, action);
-
-      const updatedData = [...filteredData, personToUpdate];
-
-      this.setState({
-        data: updatedData
-      });
 
       this.bufferedData = [...filteredBufferedData, personToUpdate];
     } else { // without filters
-      const filteredData = this.state.data.filter(person => person.login.uuid !== personId);
-      const personToUpdate = this.state.data.find(person => person.login.uuid === personId);
-
-      personToUpdate.hiringStage = this.getUpdatedStageNumber(currentStage, action);
-
-      const updatedData = [...filteredData, personToUpdate];
-
-      this.setState({
-        data: updatedData
-      });
-
       this.bufferedData = updatedData;
     }
   };

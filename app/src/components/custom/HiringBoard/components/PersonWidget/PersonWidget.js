@@ -26,12 +26,11 @@ class PersonWidget extends Component {
           <Contacts>
             <div><Text>{person.name.first}</Text> from <Text>{person.location.city}</Text></div>
             <div>Tel: {person.phone}</div>
-            {/*<div>{person.email}</div>*/}
           </Contacts>
         </Container>
         <ButtonContainer>
-          { buttonsConfig.prev && <Button onClick={() => this.handleClick('prev')}><Chevron className="left" /></Button> }
-          { buttonsConfig.next && <Button onClick={() => this.handleClick('next')}><Chevron className="right" /></Button> }
+          { buttonsConfig.prev && <Button className="prev" onClick={() => this.handleClick('prev')}><Chevron className="left" /></Button> }
+          { buttonsConfig.next && <Button className="next" onClick={() => this.handleClick('next')}><Chevron className="right" /></Button> }
         </ButtonContainer>
       </Wrapper>
     );

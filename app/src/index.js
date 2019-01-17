@@ -1,6 +1,6 @@
 import "babel-polyfill";
 import React from 'react';
 import ReactDOM from 'react-dom';
-import HiringBoard from './components/HiringBoard/HiringBoard';
+import { Home } from './pages';
 
-ReactDOM.render(<HiringBoard />, document.getElementById('root'));
+ReactDOM.render(<Home />, document.getElementById('root'));
